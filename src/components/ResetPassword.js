@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axiosInstance from '../axiosInstance';
+import axios from '../axios';
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -32,7 +32,7 @@ const ResetPassword = () => {
 
     setIsLoading(true);
     try {
-      await axiosInstance.post('/auth/reset-password', { newPassword: password, token });
+      await axios.post('/auth/reset-password', { newPassword: password, token });
       setMessage('Password reset successful');
     } catch (error) {
       console.error(error);
