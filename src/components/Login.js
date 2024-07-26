@@ -37,7 +37,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('/auth/login', { email, password });
+      await axios.post('/auth/login', { email, password });
       alert('Login successful');
     } catch (error) {
       console.error(error);
