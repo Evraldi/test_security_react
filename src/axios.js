@@ -19,18 +19,10 @@ export const fetchCsrfToken = async () => {
   try {
     const response = await axiosInstance.get('/auth/csrf-token');
     const token = response.data.csrfToken;
-    document.cookie = `XSRF-TOKEN=${token}; path=/; SameSite=Strict`;
+    document.cookie = `XSRF-TOKEN=${token}; path=/; SameSite=Strict; Secure;`;
   } catch (error) {
     console.error('Failed to fetch CSRF token:', error);
   }
 };
 
 export default axiosInstance;
-
-
-
-// document.cookie = `XSRF-TOKEN=${token}; path=/; SameSite=None; Secure;`;
-
-
-
-
