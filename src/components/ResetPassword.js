@@ -12,11 +12,23 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const query = useQuery();
-  const token = query.get('token'); // Extracting the token from the query parameters
+  const token = query.get('token');
 
   const validatePassword = () => {
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters long');
+      return false;
+    }
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError('Password must include at least one uppercase letter');
+      return false;
+    }
+    if (!/[0-9]/.test(password)) {
+      setPasswordError('Password must include at least one number');
+      return false;
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+      setPasswordError('Password must include at least one special character');
       return false;
     }
     setPasswordError('');
@@ -36,7 +48,7 @@ const ResetPassword = () => {
       setMessage('Password reset successful');
     } catch (error) {
       console.error(error);
-      setMessage('Failed to reset password');
+      setMessage('Failed to reset password: ' + (error.response?.data?.msg || 'Please try again.'));
     } finally {
       setIsLoading(false);
     }

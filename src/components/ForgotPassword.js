@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, { useState } from 'react';
 import axios from '../axios';
 
@@ -12,18 +13,17 @@ const ForgotPassword = () => {
     setError('');
     setMessage('');
     setLoading(true);
-  
+
     try {
       await axios.post('/auth/forgot-password', { email });
-      setMessage('Password reset link sent to your email.');
+      setMessage(DOMPurify.sanitize('Password reset link sent to your email.'));
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to send reset link. Please try again.');
+      setError(DOMPurify.sanitize('Failed to send reset link. Please try again.'));
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <form onSubmit={handleSubmit}>
@@ -35,14 +35,15 @@ const ForgotPassword = () => {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
           required
         />
       </div>
       <button type="submit" disabled={loading}>
         {loading ? 'Sending...' : 'Send Reset Link'}
       </button>
-      {message && <p className="message">{message}</p>}
-      {error && <p className="error">{error}</p>}
+      {message && <p className="message" dangerouslySetInnerHTML={{ __html: message }} />}
+      {error && <p className="error" dangerouslySetInnerHTML={{ __html: error }} />}
     </form>
   );
 };
