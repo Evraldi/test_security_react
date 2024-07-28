@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import React, { useState } from 'react';
 import axios from '../axios';
 
@@ -11,13 +12,21 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const sanitizeInput = (input) => {
+    return DOMPurify.sanitize(input);
+  };
+
   const validateInputs = () => {
     let isValid = true;
 
-    if (name.trim() === '') {
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedPassword = sanitizeInput(password);
+    const sanitizedName = sanitizeInput(name);
+
+    if (sanitizedName.trim() === '') {
       setNameError('Username is required');
       isValid = false;
-    } else if (name.length < 5) {
+    } else if (sanitizedName.length < 5) {
       setNameError('Username must be at least 5 characters long');
       isValid = false;
     } else {
@@ -25,7 +34,7 @@ const Register = () => {
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailPattern.test(email)) {
+    if (!emailPattern.test(sanitizedEmail)) {
       setEmailError('Invalid email address');
       isValid = false;
     } else {
@@ -33,12 +42,13 @@ const Register = () => {
     }
 
     const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordPattern.test(password)) {
+    if (!passwordPattern.test(sanitizedPassword)) {
       setPasswordError('Password must be at least 8 characters long and include an uppercase letter, a number, and a special character');
       isValid = false;
     } else {
       setPasswordError('');
     }
+    console.log(emailError);
 
     return isValid;
   };
@@ -52,7 +62,7 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      await axios.post('/auth/register', { email, password, name });
+      await axios.post('/auth/register', { email: sanitizeInput(email), password: sanitizeInput(password), name: sanitizeInput(name) });
       alert('Registration successful');
       setEmail('');
       setPassword('');
@@ -80,10 +90,11 @@ const Register = () => {
         />
         {emailError && <p id="email-error" style={{ color: 'red' }}>{emailError}</p>}
       </label>
+
       <label>
-        name:
+        Username:
         <input 
-          type='text' 
+          type="text" 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
           aria-required="true"
