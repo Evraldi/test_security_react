@@ -24,9 +24,9 @@ describe('Register Page', () => {
       body: { message: 'Registration successful' }
     }).as('registerUser');
 
-    cy.get('input[type="email"]').type('test@example.com');
+    cy.get('input[type="email"]').type('testaaaa@example.commmm');
     cy.wait(1000);
-    cy.get('input[type="text"]').type('validname');
+    cy.get('input[type="text"]').type('validnaaameaa');
     cy.wait(1000);
     cy.get('input[type="password"]').type('ValidPass123!');
     cy.wait(1000);
